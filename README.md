@@ -20,7 +20,6 @@ For OpenShift environments located across different remote locations, the automa
 * OC commands are run directly on the Ansible node
 * Modular design, making it easy to add new components
 * Available Modules:
- 	* oc-logout: Logs out from OpenShift to ensure session security
 	* get-token: Retrieves the access token for API requests
 	* get-nodes: Collects node information, including health and resource usage
 	* get-co: Gathers ClusterOperator status for component health
@@ -157,7 +156,6 @@ This playbook connects to OpenShift (IPI) clusters via AWX, monitoring the healt
 * OC commands are run directly on the Ansible node
 * Modular design, making it easy to add new components
 * Available Modules:
- 	* oc-logout: Logs out from OpenShift to ensure session security
 	* get-token: Retrieves the access token for API requests
 	* get-nodes: Collects node information, including health and resource usage
 	* get-co: Gathers ClusterOperator status for component health
