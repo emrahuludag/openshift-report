@@ -1,6 +1,6 @@
 ---
 - name: Openshift Cluster Report
-  hosts: tavautomation.tav.aero
+  hosts: ansible-node
   tasks:
   roles:
     - role: oc-logout
