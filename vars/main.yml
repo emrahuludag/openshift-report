@@ -1,0 +1,24 @@
+---
+site_name: "TRIST"
+cluster_name: "TR-DEV"
+
+# Authorized user
+#
+ocp_user: "user"
+ocp_pass: "pass"
+ocp_url: "https://api.exampledomain.local:6443"
+
+#
+# Mail Relay Configuration
+#
+mail_host: "1.1.1.1"
+mail_port: "25"
+mail_sender: "cluster-report@exampledomain.local (Cluster Overview Automation)"
+mail_to: "emrahuludag@gmail.com, devops@exampledomain.local"
+
+#
+# Console and App UI Certificate Checks
+#
+web_console: "console-openshift-console.apps.exampledomain.local"
+app_ui: "console-openshift-console.apps.exampledomain.local"
+

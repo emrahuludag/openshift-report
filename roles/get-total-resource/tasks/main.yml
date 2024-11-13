@@ -1,0 +1,14 @@
+---
+- name: Get total resource
+  shell: |
+      echo "Name;Node Total;CPU Total;Memory Total (MB)"  
+      master_info=$(oc get nodes -l node-role.kubernetes.io/master --no-headers -o custom-columns=CPU:.status.capacity.cpu,MEMORY:.status.capacity.memory | \
+      awk '{cpu+=$1; mem+=$2; count++} END {printf "%d;%d;%d", count, cpu, mem/1024}')
+      master_count=$(echo "$master_info" | awk -F ';' '{print $1}')
+      worker_info=$(oc get nodes -l node-role.kubernetes.io/worker --no-headers -o custom-columns=CPU:.status.capacity.cpu,MEMORY:.status.capacity.memory | \
+      awk '{cpu+=$1; mem+=$2; count++} END {printf "%d;%d;%d", count, cpu, mem/1024}')
+      worker_count=$(echo "$worker_info" | awk -F ';' '{print $1}')
+      echo "master;$master_count;$(echo "$master_info" | awk -F ';' '{print $2}');$(echo "$master_info" | awk -F ';' '{print $3}')"
+      echo "worker;$worker_count;$(echo "$worker_info" | awk -F ';' '{print $2}');$(echo "$worker_info" | awk -F ';' '{print $3}')"
+  register: total_resource_info
+

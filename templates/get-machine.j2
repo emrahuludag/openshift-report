@@ -1,0 +1,78 @@
+
+<h2>Worker Machine Set</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Desired</th>
+            <th>Current</th>
+            <th>Ready</th>
+            <th>Available</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in machinesets_info.stdout_lines %}
+        {% set fields = line.split(';') %}
+        <tr            
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td>{{ fields[0] }}</td>
+            <td>{{ fields[1] }}</td>
+            <td>{{ fields[2] }}</td>
+            <td>{{ fields[3] }}</td>
+            <td>{{ fields[4] }}</td>
+            <td>{{ fields[5] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>Machines</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>vCPU</th>
+            <th>CoresPerSocket</th>
+            <th>Memory</th>
+            <th>Disk</th>
+            <th>IP</th>
+            <th>Vlan</th>
+            <th>Datacenter</th>
+            <th>Datastore</th>
+            <th>Folder</th>
+            <th>vCenter</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in machine_info.stdout_lines[1:] %}
+        {% set fields = line.split(';') %}
+        <tr            
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td>{{ fields[0] }}</td>
+            <td>{{ fields[1] }}</td>
+            <td>{{ fields[2] }}</td>
+            <td>{{ fields[3] }}</td>
+            <td>{{ fields[4] }}</td>
+            <td>{{ fields[5] }}</td>
+            <td>{{ fields[6] }}</td>
+            <td>{{ fields[7] }}</td>
+            <td>{{ fields[8] }}</td>
+            <td>{{ fields[9] }}</td>
+            <td>{{ fields[10] }}</td>
+            <td>{{ fields[11] }}</td>
+            <td>{{ fields[12] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

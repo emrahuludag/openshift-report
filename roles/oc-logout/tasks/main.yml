@@ -1,0 +1,11 @@
+---
+- name: Logout user
+  shell: >
+    oc logout
+  register: login_output
+  ignore_errors: true
+
+
+- name: Check logout
+  debug:
+    msg: "{{ login_output.stdout }}"

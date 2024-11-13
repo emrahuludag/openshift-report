@@ -1,0 +1,22 @@
+---
+
+- name: Gather node resources
+  shell: oc get nodes --no-headers --o custom-columns=NAME:.metadata.name
+  register: node_names
+
+- name: Gather node conditions
+  shell: "oc describe node {{ item }} | grep -A 6 'Conditions:' | grep -vE 'Conditions:' | grep -vE '-'"
+  loop: "{{ node_names.stdout_lines }}"
+  register: node_conditions
+
+#- name: Display Node Conditions
+#  debug:
+#    var: node_conditions.stdout
+
+- name: Prepare data for Jinja template
+  set_fact:
+    nodes_info: |
+      {%- for node in node_conditions.results %}
+      Node: {{ node.item }}
+      {{ node.stdout }}
+      {%- endfor %}

@@ -1,0 +1,16 @@
+---
+- name: Get node resource usage
+  shell: |
+    echo "NodeName CPU CPU% MemoryTotal/Free Memory%"
+    for node in $(oc get nodes -o custom-columns=NAME:.metadata.name --no-headers); do
+        cpu_capacity=$(oc get node $node -o jsonpath='{.status.capacity.cpu}')
+        memory_capacity=$(oc get node $node -o jsonpath='{.status.capacity.memory}' | sed 's/Ki//')
+        cpu_usage=$(oc get --raw "/apis/metrics.k8s.io/v1beta1/nodes/$node" | jq -r '.usage.cpu')
+        memory_usage=$(oc get --raw "/apis/metrics.k8s.io/v1beta1/nodes/$node" | jq -r '.usage.memory')
+        memory_capacity_mb=$(echo "scale=2; $memory_capacity / 1024" | bc)
+        memory_usage_mb=$(echo "scale=2; $(echo $memory_usage | sed 's/Ki$//') / 1024" | bc)
+        cpu_percent=$(oc adm top node $node --no-headers | awk '{print $3}' | sed 's/%//')
+        memory_percent=$(oc adm top node $node --no-headers | awk '{print $5}' | sed 's/%//')
+        echo "$node $cpu_capacity $cpu_percent% $memory_capacity_mb/$memory_usage_mb $memory_percent%"
+    done
+  register: topnode_output

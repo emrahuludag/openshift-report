@@ -1,0 +1,92 @@
+<h2>Certification Expire Date</h2>
+
+{% set cert_end_date_str = cert_end_date[0] %}
+{% set cert_end_date = cert_end_date_str | to_datetime('%b %d %H:%M:%S %Y %Z') %}
+{% set current_date = now() %}
+{% set days_remaining = (cert_end_date - current_date).days %}
+
+
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Address</th>
+            <th>Certificate Start Date</th>
+            <th>Certificate Expire Date</th>
+        </Tr>
+    </thead>
+    <tbody>
+        <tr>
+           <td>{{ web_console }}</td>
+           <td>{{ cert_start_date }}</td>
+           <td style="background-color: {% if days_remaining < 30 %} red {% endif %}; color: {% if days_remaining < 30 %} white {% else %} black {% endif %}; font-weight: {% if days_remaining < 30 %} bold {% endif %};">
+               {{ cert_end_date.strftime('%b %d %H:%M:%S %Y %Z') }}
+           </td>
+        </tr>
+    </tbody>
+</table>
+
+<br>
+
+
+
+{% if app_ui is not none %}
+
+{% set app_ui_cert_end_date_str = app_ui_cert_end_date[0] %}
+{% set app_ui_cert_end_date = app_ui_cert_end_date_str | to_datetime('%b %d %H:%M:%S %Y %Z') %}
+{% set current_date = now() %}
+{% set days_remaining = (app_ui_cert_end_date - current_date).days %}
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Address</th>
+            <th>Certificate Start Date</th>
+            <th>Certificate Expire Date</th>
+        </Tr>
+    </thead>
+    <tbody>
+        <tr>
+           <td>{{ app_ui }}</td>
+           <td>{{ app_ui_cert_start_date }}</td>
+           <td style="background-color: {% if days_remaining < 30 %} red {% endif %}; color: {% if days_remaining < 30 %} white {% else %} black {% endif %}; font-weight: {% if days_remaining < 30 %} bold {% endif %};">
+               {{ app_ui_cert_end_date.strftime('%b %d %H:%M:%S %Y %Z') }}
+           </td>
+        </tr>
+    </tbody>
+</table>
+{% endif %}
+
+<h2>Routes</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Namespace</th>
+            <th>Name</th>
+            <th>Host/Port</th>
+            <th>Path</th>
+            <th>Service</th>
+            <th>Port</th>
+            <th>Status </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in route_information.stdout_lines[1:]%}
+        {% set fields = line.split(';') %}
+        <tr            
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td><strong>{{ fields[0] }}</strong></td>
+            <td><strong>{{ fields[1] }}</strong></td>
+            <td><strong>{{ fields[2] }}</strong></td>
+            <td><strong>{{ fields[3] }}</strong></td>
+            <td>{{ fields[4] }}</td>
+            <td>{{ fields[5] }}</td>
+            <td>{{ fields[6] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

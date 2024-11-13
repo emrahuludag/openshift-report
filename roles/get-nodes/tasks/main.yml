@@ -1,0 +1,24 @@
+---
+- name: Get nodes status
+  shell: >
+    oc get nodes -o wide
+  register: nodes_output
+  when: token_output.rc == 0
+
+#- name: Display nodes status
+#  debug:
+#    var: nodes_output.stdout
+
+- name: Initialize node_critical_flag
+  set_fact:
+    node_critical_flag: false
+
+- name: Set critical in nodes status
+  set_fact:
+    node_critical_flag: true
+  when: >
+    nodes_output.stdout is defined and
+     ('NotReady' in nodes_output.stdout or
+      'SchedulingDisabled' in nodes_output.stdout or
+      'Unknown' in nodes_output.stdout or
+      'Unschedulable' in nodes_output.stdout)

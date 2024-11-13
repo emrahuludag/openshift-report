@@ -1,0 +1,27 @@
+<table border="1">
+    <thead>
+        <tr>
+            <th>Node Name</th>
+            <th>CPU Request</th>
+            <th>CPU Limit</th>
+            <th>Memory Request</th>
+            <th>Memory Limit</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for node in nodes_data %}
+        <tr 
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td>{{ node.name }}</td>
+            <td>{{ node.cpu_request }}</td>
+            <td>{{ node.cpu_limit }}</td>
+            <td>{{ node.memory_request }}</td>
+            <td>{{ node.memory_limit }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

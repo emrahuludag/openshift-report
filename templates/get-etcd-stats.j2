@@ -1,0 +1,29 @@
+<h2>ETCD Pods Status</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Pod Name</th>
+            <th>Ready</th>
+            <th>Status</th>
+            <th>Restarts</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in etcd_pod_stats_output.stdout_lines[1:] %}
+        {% set fields = line.split(maxsplit=5) %}  
+        <tr 
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td><strong>{{ fields[0] }}</strong></td>
+            <td>{{ fields[1] }}</td>
+            <td>{{ fields[2] }}</td>
+            <td>{{ fields[3] }}</td>
+            <td>{{ fields[4] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,19 @@
+---
+ 
+- name: Get cluster operator status
+  shell: >
+    oc get co
+  register: co_output
+  when: token_output.rc == 0
+
+- name: Initialize co_warning_flag
+  set_fact:
+    co_warning_flag: false
+
+- name: Set warnings for co status status
+  set_fact:
+    co_warning_flag: true
+  when: item.split() | length > 5 and (item.split()[3] == 'True' or item.split()[4] == 'True')
+  loop: "{{ co_output.stdout_lines}}"
+  loop_control:
+    label: "{{ item }}"

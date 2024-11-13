@@ -1,0 +1,32 @@
+---
+- name: Openshift Cluster Report
+  hosts: tavautomation.tav.aero
+  tasks:
+  roles:
+    - role: oc-logout
+    - role: get-token-awx
+    - role: get-nodes
+    - role: get-co
+    - role: get-resource
+    - role: get-node-conditions 
+    #- role: get-pods-distribution
+    - role: get-etcd-stats
+    #- role: get-update-status
+    #- role: get-deployments
+    #- role: get-ssl
+    - role: get-alert
+    - role: get-pod-health
+    #- role: get-overcommitted
+    #- role: get-pv
+    #- role: get-pod-status
+    #- role: get-pod-usage
+    #- role: get-ns
+    #- role: get-route
+    - role: get-total-resource
+    #- role: get-operators
+    #- role: get-users-group
+    #- role: get-machine
+    #- role: get-daemonset
+    #- role: get-apps
+    - role: send-mail-monitoring
+    - role: oc-logout

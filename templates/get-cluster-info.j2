@@ -1,0 +1,27 @@
+<h2>Cluster Total Resources</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Role</th>
+            <th>Node Count</th>
+            <th>Cpu Total(vCPU)</th>
+            <th>Memory Total(MB)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in total_resource_info.stdout_lines[1:] %}
+        {% set fields = line.split(';') %}
+        <tr            
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td>{{ fields[0] }}</td>
+            <td>{{ fields[1] }}</td>
+            <td>{{ fields[2] }}</td> 
+            <td>{{ fields[3] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,33 @@
+<h2>Routes</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Host/Port</th>
+            <th>Path</th>
+            <th>Service</th>
+            <th>Port</th>
+            <th>Target Port</th>
+            <th>Status </th>
+        </Tr>
+    </thead>
+    <tbody>
+        {% for line in route_information.stdout_lines[1:] %}
+        {% set fields = line.split(';') %}
+        <tr            
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td><strong>{{ fields[0] }}</strong></td>
+            <td><strong>{{ fields[1] }}</strong></td>
+            <td>{{ fields[2] }}</td>
+            <td><strong>{{ fields[3] }}</strong></td>
+            <td>{{ fields[4] }}</td>
+            <td>{{ fields[5] }}</td>
+            <td>{{ fields[6] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

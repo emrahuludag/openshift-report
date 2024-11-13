@@ -1,0 +1,27 @@
+---
+- name: Get pv
+  shell: |
+     oc get pv -A -o json | jq -r '.items[] | [(.metadata.name // "N/A"), (.spec.capacity.storage // "N/A"), (.spec.accessModes[0] // "N/A"), (.spec.persistentVolumeReclaimPolicy // "N/A"), (.status.phase // "N/A"), (.spec.claimRef | if . == null then "N/A" else (.namespace + "/" + .name) end), (.spec.storageClassName // "N/A"), (.metadata.creationTimestamp // "N/A")] | join(";")'
+  register: pv_info
+
+#- name: Debug pv information
+#  debug:
+#    msg: "{{ pv_info.stdout }}"
+
+- name: Get pvc
+  shell: |
+       oc get pvc -A -o json | jq -r '.items[] | [(.metadata.namespace // "N/A"), (.metadata.name // "N/A"), (.status.phase // "N/A"), (.spec.volumeName // "N/A"), (.spec.resources.requests.storage // "N/A"), (.spec.accessModes[0] // "N/A"), (.spec.storageClassName // "N/A"), (.metadata.creationTimestamp // "N/A")] | join(";")'
+  register: pvc_info
+
+#- name: Debug pvc information
+#  debug:
+#    msg: "{{ pvc_info.stdout }}"
+
+- name: Get sc
+  shell: |
+       oc get sc -o json | jq -r '.items[] | [(.metadata.name // "N/A"), (.provisioner // "N/A"), (.reclaimPolicy // "N/A"), (.volumeBindingMode // "N/A"), (.allowVolumeExpansion // "N/A" | tostring), (.metadata.creationTimestamp // "N/A")] | join(";")'
+  register: sc_info
+
+ #- name: Debug sc information
+ #  debug:
+ #    msg: "{{ sc_info.stdout }}"

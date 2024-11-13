@@ -1,0 +1,110 @@
+<h2>POD's Health</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th colspan="8">List of Pod Issues: Pending, Failed, and Crash States</th>
+        </tr>
+        <tr>
+            <th>Namespace</th>
+            <th>Name            </th>
+            <th>Ready</th>
+            <th>Status</th>
+            <th>Restarts</th>
+            <th>Age</th>
+            <th>Ip</th>
+            <th>Node</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in pod_issues_info.stdout_lines[1:] %}
+        {% set fields = line.split(';') %}
+        <tr            
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td style="white-space: nowrap"><strong>{{ fields[0] }}</strong></td>
+            <td>{{ fields[1] }}</td>
+            <td>{{ fields[2] }}</td>
+            <td>{{ fields[3] }}</td>
+            <td>{{ fields[4] }}</td>
+            <td>{{ fields[5] }}</td>
+            <td>{{ fields[6] }}</td>
+            <td style="white-space: nowrap"><strong>{{ fields[7] }}</strong></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br>
+
+<table border="1" id="restartpod">
+    <thead>
+        <tr>
+            <th colspan="6">List of Pods Restarted In the Last 24 Hours</th>
+        </tr>
+        <tr>
+            <th>Namespace</th>
+            <th>Pod Name</th>
+            <th>Restart Count</th>
+            <th>Status</th>
+            <th>Last Restart Time (UTC)</th>
+            <th>Node</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in pod_restart_info.stdout_lines[1:] %}
+        {% set fields = line.split() %}
+        <tr
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td>{{ fields[0] if fields | length > 0 else 'N/A' }}</td>
+            <td>{{ fields[1] if fields | length > 1 else 'N/A' }}</td>
+            <td>{{ fields[2] if fields | length > 2 else 'N/A' }}</td>
+            <td>{{ fields[3] if fields | length > 3 else 'N/A' }}</td>
+            <td>{{ fields[4] if fields | length > 4 else 'N/A' }}</td>
+            <td>{{ fields[5] if fields | length > 5 else 'N/A' }}</td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>
+
+<table border="1" id="createdpod">
+    <thead>
+        <tr>
+            <th colspan="5">List of Pods Created In the Last 24 Hours</th>
+        </tr>
+        <tr>
+            <th>NAMESPACE</th>
+            <th>POD NAME</th>
+            <th>STATUS</th>
+            <th>CREATED TIME</th>
+            <th>NODE</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in pod_create_info.stdout_lines[1:] %}
+        {% set fields = line.split() %}
+        <tr
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td>{{ fields[0] if fields | length > 0 else 'N/A' }}</td>
+            <td>{{ fields[1] if fields | length > 1 else 'N/A' }}</td>
+            <td>{{ fields[2] if fields | length > 2 else 'N/A' }}</td>
+            <td>{{ fields[3] if fields | length > 3 else 'N/A' }}</td>
+            <td>{{ fields[4] if fields | length > 4 else 'N/A' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>

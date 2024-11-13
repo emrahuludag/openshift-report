@@ -1,0 +1,15 @@
+---
+
+- name: Get Installed Operators
+  shell: |
+      oc get operators -A | awk -F "  +" '{$1=$1}1' OFS=";"
+  register: operator_information
+
+#- name: Debug project_namespace information
+#  debug:
+#    msg:  "{{ project_namespace.stdout }}"
+
+- name: Get Cluster Service 
+  shell: |
+      oc get csv | awk -F "  +" '{$1=$1}1' OFS=";"
+  register: cluster_service_info

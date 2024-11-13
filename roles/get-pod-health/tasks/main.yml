@@ -1,0 +1,40 @@
+---
+
+- name: Get pod restart information
+  shell: |
+    (echo -e "NAMESPACE\tPOD NAME\tRESTART COUNT\tSTATUS\tLAST RESTART TIME (UTC)\tNODE NAME"; 
+    oc get pods --all-namespaces -o json | jq -r --arg date "$(date -d '24 hours ago' -u +%Y-%m-%dT%H:%M:%SZ)" '
+      .items[] | 
+      select(.status.containerStatuses[0].restartCount > 0 and .status.containerStatuses[0].state.running.startedAt > $date) | 
+      [.metadata.namespace, 
+       .metadata.name, 
+       (.status.containerStatuses[0].restartCount | tostring), 
+       .status.phase, 
+       .status.containerStatuses[0].state.running.startedAt,
+       .spec.nodeName] | @tsv'
+    )
+  register: pod_restart_info
+
+#- name: Debug pod restart information
+#  debug:
+#    msg: "{{ pod_restart_info.stdout }}"
+
+
+- name: Get created pod information
+  shell: |
+     (echo -e "NAMESPACE\tPOD NAME\tSTATUS\tCREATED TIME (UTC)\tNODE NAME";
+     oc get pods -o wide --all-namespaces -o json | jq -r --arg date "$(date -d '24 hours ago' -u +%Y-%m-%dT%H:%M:%SZ)" '
+      .items[] |
+      select(.metadata.creationTimestamp > $date) |
+     [.metadata.namespace, .metadata.name, .status.phase, .metadata.creationTimestamp, .spec.nodeName ] | @tsv';
+     )
+  register: pod_create_info
+
+- name: Overview of Pod Issues Pending, Failed, and Crash States
+  shell: |
+    oc get pods --all-namespaces -o wide --field-selector=status.phase!=Running,status.phase!=Succeeded  | awk -F "  +" '{$1=$1}1' OFS=";"
+  register: pod_issues_info
+
+#- name: Overview of Pod Issues Pending, Failed, and Crash States
+#  debug:
+#    msg: "{{ pod_issues_info.stdout }}"

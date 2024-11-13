@@ -1,0 +1,16 @@
+---
+
+
+- name: Get all nodes and conditions
+  shell: |
+       oc get nodes -o json | jq -r '
+        ( .items[] | 
+          [.metadata.name,
+           (.status.conditions[] | select(.type == "Ready") | .lastHeartbeatTime),
+           (.status.conditions[] | select(.type == "MemoryPressure") | .reason),
+           (.status.conditions[] | select(.type == "DiskPressure") | .reason),
+           (.status.conditions[] | select(.type == "PIDPressure") | .reason),
+           (.status.conditions[] | select(.type == "Ready") | .reason)         
+          ] 
+        | join(";"))'
+  register: node_conditions_v2_output

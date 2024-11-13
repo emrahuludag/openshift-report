@@ -1,0 +1,47 @@
+<h2>TOP POD</h2>
+<table border="1" id="toppodtable">
+    <thead>
+        <tr>
+            <th>Namespace 
+                <br>
+                <span onclick="sortTable('toppodtable', 0, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('toppodtable', 0, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('toppodtable')" placeholder="Search..">
+            </th>
+            <th>Pod Name
+                <br>
+                <span onclick="sortTable('toppodtable', 1, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('toppodtable', 1, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('toppodtable')" placeholder="Search..">
+            <th>Cpu Usage (CORES)
+                <br>
+                <span onclick="sortTable('toppodtable', 2, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('toppodtable', 2, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('toppodtable')" placeholder="Search..">
+            </th>
+            <th>Memory Usage (MB)
+                <br>
+                <span onclick="sortTable('toppodtable', 3, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('toppodtable', 3, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('toppodtable')" placeholder="Search..">
+
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in pod_usage_resources.stdout_lines[1:] %}
+        {% set fields = line.split(';') %}
+        <tr
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td><strong>{{ fields[0] }}</strong></td>
+            <td><strong>{{ fields[1] }}</strong></td>
+            <td>{{ fields[2] }}</td>
+            <td>{{ fields[3] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

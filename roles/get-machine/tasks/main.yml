@@ -1,0 +1,44 @@
+---
+
+- name: Get Machinesets
+  shell: |
+      oc get machinesets -n openshift-machine-api -o json | jq -r '
+      .items[] | 
+      {
+       Name: (.metadata.name // "N/A"), 
+       Desired: (.spec.replicas // "N/A"),
+       Current: (.status.replicas // "N/A"),
+       Ready: (.status.readyReplicas // "N/A"),
+       Available: (.status.availableReplicas // "N/A"),
+       Age: (.metadata.creationTimestamp // "N/A"), 
+      } | join (";")'
+  register: machinesets_info
+
+
+
+- name: Get Machines
+  shell: |
+       (
+       echo "Name;Phase;vCPU;CoresPerSocket;Memory;Disk;InternalIP;VLAN;Datacenter;Datastore;VMFolder;ResourcePool;vCenter;Provider;Age"
+       oc get machines -n openshift-machine-api -o json | jq -r '
+       .items[] | 
+       [
+           .metadata.name // "N/A", 
+           .status.phase // "N/A", 
+           .spec.providerSpec.value.numCPUs // "N/A", 
+           .spec.providerSpec.value.numCoresPerSocket // "N/A", 
+           .spec.providerSpec.value.memoryMiB // "N/A", 
+           .spec.providerSpec.value.diskGiB // "N/A", 
+           (.status.addresses | map(select(.type == "InternalIP") | .address) | .[0]) // "N/A", 
+           (.spec.providerSpec.value.network.devices[] | .networkName) // "N/A", 
+           .spec.providerSpec.value.workspace.datacenter // "N/A", 
+           .spec.providerSpec.value.workspace.datastore // "N/A", 
+           .spec.providerSpec.value.workspace.folder // "N/A", 
+           .spec.providerSpec.value.workspace.server // "N/A", 
+           .metadata.creationTimestamp // "N/A"
+       ] | join(";")' 
+       )
+  register: machine_info
+
+
+

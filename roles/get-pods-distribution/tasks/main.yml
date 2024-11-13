@@ -1,0 +1,16 @@
+---
+
+- name: Get Node Pod Distribution
+  shell: |
+    echo -e "Node\tCapacity\tTotal"
+    nodes=$(oc get nodes -o jsonpath='{.items[*].metadata.name}')
+    for node in $nodes; do
+        capacity=$(oc get node $node -o jsonpath='{.status.allocatable.pods}')
+        total=$(oc get pods --all-namespaces --field-selector spec.nodeName=$node --no-headers | wc -l)
+        echo -e "$node\t$capacity\t$total"
+    done
+  register: pod_stats_output
+  
+#- name: Print the output
+#  debug:
+#    msg: "{{ pod_stats_output.stdout }}"

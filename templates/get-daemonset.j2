@@ -1,0 +1,77 @@
+<h2>Daemonset</h2>
+<table border="1" id="daemonsettable">
+    <thead>
+        <tr>
+            <th>Namespace
+                <br>
+                <span onclick="sortTable('daemonsettable', 0, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('daemonsettable', 0, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('daemonsettable')" placeholder="Search.."> 
+            </th>
+            <th>Name
+                <br>
+                <span onclick="sortTable('daemonsettable', 1, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('daemonsettable', 1, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('daemonsettable')" placeholder="Search.."> 
+            </th>
+            <th>Desired
+                <br>
+                <span onclick="sortTable('daemonsettable', 2, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('daemonsettable', 2, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('daemonsettable')" placeholder="Search.."> 
+            </th>
+            <th>Current
+                <br>
+                <span onclick="sortTable('daemonsettable', 3, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('daemonsettable', 3, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('daemonsettable')" placeholder="Search.."> 
+            </th>
+            <th>Ready
+                <br>
+                <span onclick="sortTable('daemonsettable', 4, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('daemonsettable', 4, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('daemonsettable')" placeholder="Search.."> 
+            </th>
+            <th>Up To Date
+                <br>
+                <span onclick="sortTable('daemonsettable', 5, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('daemonsettable', 5, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('daemonsettable')" placeholder="Search.."> 
+            </th>
+            <th>Available
+                <br>
+                <span onclick="sortTable('daemonsettable', 6, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('daemonsettable', 6, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('daemonsettable')" placeholder="Search.."> 
+            </th>
+            <th>Node Selector
+                <br>
+                <span onclick="sortTable('daemonsettable', 7, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('daemonsettable', 7, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('daemonsettable')" placeholder="Search.."> 
+            </th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in daemonset_info.stdout_lines[1:] %}
+        {% set fields = line.split(';') %}
+        <tr            
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td>{{ fields[0] }}</td>
+            <td>{{ fields[1] }}</td>
+            <td>{{ fields[2] }}</td>
+            <td>{{ fields[3] }}</td>
+            <td>{{ fields[4] }}</td>
+            <td>{{ fields[5] }}</td>
+            <td>{{ fields[6] }}</td>
+            <td>{{ fields[7] | truncate(21, True, '...')}}</td>
+            <td>{{ fields[8] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

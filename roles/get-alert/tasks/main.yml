@@ -1,0 +1,10 @@
+---
+- name: Get Alert Manager
+  shell: |
+     oc -n openshift-monitoring exec alertmanager-main-0 -- amtool --alertmanager.url http://localhost:9093 alert -o json | jq .
+  register: get_alert_output
+
+- name: Parse JSON and extract relevant fields
+  set_fact:
+    alerts_parsed: "{{ get_alert_output.stdout | from_json }}"
+

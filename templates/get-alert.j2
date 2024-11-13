@@ -1,0 +1,54 @@
+<h2>Alert Manager Notifications</h2>
+<table border="1" id="alertstable">
+    <thead>
+        <tr>
+            <th>Alert Name
+            <br>
+                <span onclick="sortTable('alertstable', 0, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('alertstable', 0, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Starts At
+            <br>
+                <span onclick="sortTable('alertstable', 1, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('alertstable', 1, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Severity
+            <br>
+                <span onclick="sortTable('alertstable', 2, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('alertstable', 2, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Summary
+                <br>
+                <span onclick="sortTable('alertstable', 3, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('alertstable', 3, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>State
+            <br>
+                <span onclick="sortTable('alertstable', 4, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('alertstable', 4, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for alert in alerts_parsed %}
+        <tr
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td style="font-size: 12px; text-align: left;">{{ alert.labels.alertname }}</td>
+            <td style="font-size: 12px; text-align: left; white-space: normal;  max-width: 150px;">{{ alert.startsAt }}</td>
+            <td {% if alert.labels.severity == 'major' %} style="background-color: lightcoral; color: white; text-align: center;" {% endif %}>{{ alert.labels.severity }}</td>
+            <td style="word-wrap: break-word; white-space: normal; text-align: left;">
+                {% if alert.annotations.summary is defined %}
+                    {{ alert.annotations.summary }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>{{ alert.status.state }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

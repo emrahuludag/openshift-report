@@ -1,0 +1,6 @@
+---
+
+- name: Get ETCD Pod Status
+  shell: |
+     oc get pods -n openshift-etcd -l app=etcd
+  register: etcd_pod_stats_output

@@ -1,0 +1,31 @@
+<h2>Node Services</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Node</th>
+            <th>Last Heartbeat Time</th>
+            <th>Memory Pressure</th>
+            <th>Disk Pressure</th>
+            <th>PID Pressure</th>
+            <th>Kubelet Service</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in node_conditions_v2_output.stdout_lines %}
+        {% set fields = line.split(';') %}
+        <tr            
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td><strong>{{ fields[0] }}</strong></td>
+            <td>{{ fields[1] }}</td>
+            <td style="{% if fields[2] != 'KubeletHasSufficientMemory' %}background-color: red; color: white;{% else %}background-color: #C8F0C1;{% endif %}">{{ fields[2] }}</td>
+            <td style="{% if fields[3] != 'KubeletHasNoDiskPressure' %}background-color: red; color: white;{% else %}background-color: #C8F0C1;{% endif %}">{{ fields[3] }}</td>
+            <td style="{% if fields[4] != 'KubeletHasSufficientPID' %}background-color: red; color: white;{% else %}background-color: #C8F0C1;{% endif %}">{{ fields[4] }}</td>
+            <td style="{% if fields[5] != 'KubeletReady' %}background-color: red; color: white;{% else %}background-color: #C8F0C1;{% endif %}">{{ fields[5] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

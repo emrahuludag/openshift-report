@@ -1,0 +1,25 @@
+<table border="1">
+    <thead>
+        <tr>
+            <th>Node Name</th>
+            <th>Capacity</th>
+            <th>Total Pod</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in pod_stats_output.stdout_lines[1:] %}
+        {% set fields = line.split(maxsplit=3) %}  
+        <tr 
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td><strong>{{ fields[0] }}</strong></td>
+            <td>{{ fields[1] }}</td>
+            <td>{{ fields[2] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

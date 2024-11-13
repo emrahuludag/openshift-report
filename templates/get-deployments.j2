@@ -1,0 +1,97 @@
+<h2>Deployments</h2>
+
+<table border="1" id="deploymentstable">
+
+    <thead>
+        <tr>
+            <th>Namespace
+            <br>
+                <span onclick="sortTable('deploymentstable', 0, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 0, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('deploymentstable')" placeholder="Search ..">
+            </th>
+            <th>Name
+            <br>
+                <span onclick="sortTable('deploymentstable', 1, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 1, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('deploymentstable')" placeholder="Search ..">
+            </th>
+            <th>Replicas
+            <br>
+                <span onclick="sortTable('deploymentstable', 2, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 2, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Up To Date
+            <br>
+                <span onclick="sortTable('deploymentstable', 3, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 3, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Available
+            <br>
+                <span onclick="sortTable('deploymentstable', 4, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 4, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Age
+            <br>
+                <span onclick="sortTable('deploymentstable', 5, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 5, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Images
+            <br>
+                <span onclick="sortTable('deploymentstable', 6, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 6, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Version
+            <br>
+                <span onclick="sortTable('deploymentstable', 7, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 7, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Cpu Request
+            <br>
+                <span onclick="sortTable('deploymentstable', 8, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 8, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Cpu Limit
+            <br>
+                <span onclick="sortTable('deploymentstable', 9, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 9, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Memory Request
+            <br>
+                <span onclick="sortTable('deploymentstable', 10, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 10, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Memory Limit
+            <br>
+                <span onclick="sortTable('deploymentstable', 11, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('deploymentstable', 11, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in deployment_status_output.stdout_lines[1:] %}
+        {% set fields = line.split(';') %}
+        <tr            
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td style="white-space: nowrap" ><strong>{{ fields[0] }}</strong></td>
+            <td style="white-space: nowrap" >{{ fields[1] }}</td>
+            <td {% if fields[2] == '1' %} style="background-color: yellow; color: black;" {% endif %}>{{ fields[2] }}</td>
+            <td>{{ fields[3] }}</td>
+            <td>{{ fields[4] }}</td>
+            <td style="white-space: nowrap" >{{ fields[5] }}</td>
+            <td style="white-space: nowrap" >{{ fields[6] }}</td>
+            <td>{{ fields[7] | truncate(21, True, '...') }}</td>
+            <td>{{ fields[8] | truncate(21, True, '...') }}</td>
+            <td>{{ fields[9] | truncate(21, True, '...') }}</td>
+            <td>{{ fields[10] | truncate(21, True, '...') }}</td>
+            <td>{{ fields[11] | truncate(21, True, '...') }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>

@@ -1,0 +1,59 @@
+---    
+
+- name: Generate HTML report
+  template:
+    src: cluster_monitoring.j2
+    dest: "{{playbook_dir}}/OpenShift_{{site_name}}_{{ cluster_name }}_Cluster-Overview-Report_{{ report_date }}.html"
+  when: (node_critical_flag  == true) or (co_warning_flag == true)
+
+
+- name: Read HTML report into a variable
+  slurp:
+    src: "{{playbook_dir}}/OpenShift_{{site_name}}_{{ cluster_name }}_Cluster-Overview-Report_{{ report_date }}.html"
+  register: html_report
+  when: (node_critical_flag  == true) or (co_warning_flag == true)
+
+- name: Prepare email subject
+  set_fact:
+    email_subject: "{{ '🚨CRITICAL: Cluster Node Status ❗️ ' if node_critical_flag | default(false) else '' }} {{ '⚠️ WARN: Cluster Operator DEGRADED ' if co_warning_flag | default(false) else '' }} OpenShift Hourly {{site_name}} {{cluster_name}} Cluster Report"
+
+
+- name: Prepare email subject
+  set_fact:
+    teams_text: "{{ '🚨CRITICAL: There is a node issue in the OpenShift Cluster ❗️ ' if node_critical_flag | default(false) else '' }}\n  {{ '⚠️ WARN: Cluster Operator DEGRADED There is a cluster operator issue' if co_warning_flag | default(false) else '' }}\n  Hourly Report has been sent via emai"
+
+
+- name: Send email with report
+  community.general.mail:
+    host: "{{ mail_host }}"
+    port: "{{ mail_port }}"
+    sender: "{{ mail_sender }}"
+    to: "{{ mail_to }}"
+    subject: "{{ email_subject }}"
+    body: >
+       Please find attached the health check report for our {{ site_name }} {{ cluster_name }} OpenShift environment. 
+       This report provides an overview of the current state of our cluster, including any identified issues for improvements.
+    attach:
+    - "{{playbook_dir}}/OpenShift_{{site_name}}_{{ cluster_name }}_Cluster-Overview-Report_{{ report_date }}.html"
+    subtype: html
+  when: (node_critical_flag  == true) or (co_warning_flag == true)
+
+
+- name: Send a notification to Teams Channel
+  uri:
+    url: "https://abc.webhook.office.com/webhookb2/cUoKeaHgXStrEE6Ok1"
+    method: POST
+    body_format: json
+    headers:
+      Content-Type: "application/json"
+    body:
+      title: "{{site_name}}, {{cluster_name}}"
+      text: "{{ teams_text }}"
+      sections:
+        - facts:
+          - name : "Cluster URL"
+            value: "{{ web_console }}"
+          - name: "Date"
+            value: "{{ dash_date }}"
+    status_code: 200
+  when: (node_critical_flag  == true) or (co_warning_flag == true)

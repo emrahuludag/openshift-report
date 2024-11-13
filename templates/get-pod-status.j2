@@ -1,0 +1,72 @@
+<h2>Running POD's</h2>
+<table border="1" id="runningpodstable">
+    <thead>
+        <tr>
+            <th>Node 
+                <br>
+                <span onclick="sortTable('runningpodstable', 0, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('runningpodstable', 0, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('runningpodstable')" placeholder="Search for node..">
+            </th>
+            <th>Namespace 
+                <br>
+                <span onclick="sortTable('runningpodstable', 1, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('runningpodstable', 1, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('runningpodstable')" placeholder="Search for namespace..">
+            </th>
+            <th>Name 
+                <br>
+                <span onclick="sortTable('runningpodstable', 2, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('runningpodstable', 2, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('runningpodstable')" placeholder="Search for name..">
+            </th>
+            <th>Ready 
+                <br>
+                <span onclick="sortTable('runningpodstable', 3, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('runningpodstable', 3, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('runningpodstable')" placeholder="Search for ready..">
+            </th>
+            <th>Status 
+                <br>
+                <span onclick="sortTable('runningpodstable', 4, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('runningpodstable', 4, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('runningpodstable')" placeholder="Search for status..">
+            </th>
+            <th>Restarts 
+                <br>
+                <span onclick="sortTable('runningpodstable', 5, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('runningpodstable', 5, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Age 
+                <br>
+                <span onclick="sortTable('runningpodstable', 6, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('runningpodstable', 6, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>IP 
+                <br>
+                <span onclick="sortTable('runningpodstable', 7, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('runningpodstable', 7, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in running_pod_all_info.stdout_lines[1:] %}
+        {% set fields = line.split(';') %}
+        <tr
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td><strong>{{ fields[7] }}</strong></td>
+            <td><strong>{{ fields[0] }}</strong></td>
+            <td><strong>{{ fields[1] }}</strong></td>
+            <td>{{ fields[2] }}</td>
+            <td>{{ fields[3] }}</td>
+            <td>{{ fields[4] }}</td>
+            <td>{{ fields[5] }}</td>
+            <td>{{ fields[6] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

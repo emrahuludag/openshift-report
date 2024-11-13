@@ -1,0 +1,15 @@
+---
+- name: Get running pods information
+  shell: |
+     oc get po -A -o wide  | awk -F "  +" '{$1=$1}1' OFS=";"
+  register: running_pod_all_info
+
+#- name: Set default value if pod_restart_info is empty
+#  set_fact:
+#    #pod_restart_info: "{{ pod_restart_output.stdout_lines | map('split', '\t') }}"
+#    pod_restart_info: "{{ pod_restart_info.stdout | default('N/A') }}"
+
+
+#- name: Debug running pods information
+#  debug:
+#    msg: "{{ running_pod_all_info.stdout }}"

@@ -1,0 +1,20 @@
+---
+- name: Fact Date Time
+  set_fact:
+    report_date: "{{ '%d-%m-%Y_%H-%M' | strftime }}"
+  
+- name: Fact Date Time
+  set_fact:
+    dash_date: "{{ 'Report Date %d-%m-%Y Time: %H:%M ' | strftime }}"
+
+
+- name: Login to OpenShift with ocp user
+  shell: >
+    oc login '{{ lookup("env", "VMWARE_HOST") }}' -u '{{ lookup("env", "VMWARE_USER") }}' -p '{{ lookup("env", "VMWARE_PASSWORD") }}' --insecure-skip-tls-verify=true
+  register: login_output
+  no_log: true
+
+- name: Get Token from logged user
+  shell: oc whoami -t
+  register: token_output
+  when: login_output.rc == 0

@@ -1,0 +1,111 @@
+<h2>Installed Operator</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in operator_information.stdout_lines[1:] %}
+        {% set fields = line.split(';') %}
+        <tr            
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td><strong>{{ fields[0] }}</strong></td>
+            <td>{{ fields[1] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table> 
+
+<br>
+
+<h2>Cluster Services</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Version</th>
+            <th>Replaces</th>
+            <th>Phase</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in cluster_service_info.stdout_lines[1:] %}
+        {% set fields = line.split(';') %}
+        <tr            
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td><strong>{{ fields[0] }}</strong></td>
+            <td><strong>{{ fields[1] }}</strong></td>
+            <td>{{ fields[2] }}</td>
+            <td>{{ fields[3] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>
+
+<h2> GitOps (ArgoCD) Status</h2>
+<table border="1" id="appstable">
+    <thead>
+        <tr>
+            <th>Name
+                <br>
+                <span onclick="sortTable('appstable', 0, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('appstable', 0, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('appstable')" placeholder="Search.."> 
+            </th>
+            <th>Namespace
+                <br>
+                <span onclick="sortTable('appstable', 1, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('appstable', 1, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('appstable')" placeholder="Search.."> 
+            </th>
+            <th>Sync Status
+                <br>
+                <span onclick="sortTable('appstable', 2, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('appstable', 2, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('appstable')" placeholder="Search.."> 
+            </th>
+            <th>Health Status
+                <br>
+                <span onclick="sortTable('appstable', 3, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('appstable', 3, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('appstable')" placeholder="Search.."> 
+            </th>
+            <th>Source
+                <br>
+                <span onclick="sortTable('appstable', 4, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('appstable', 4, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Revision</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in apps_info.stdout_lines[1:] %}
+        {% set fields = line.split(';') %}
+        <tr            
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td>{{ fields[0] }}</td>
+            <td>{{ fields[1] }}</td>
+            <td>{{ fields[2] }}</td>
+            <td>{{ fields[3] }}</td>
+            <td>{{ fields[4] }}</td>
+            <td>{{ fields[5] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

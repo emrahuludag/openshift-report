@@ -1,0 +1,40 @@
+---
+
+- name: Get Machine Config Pool Status
+  shell: |
+     oc get mcp
+  register: mcp_status_output
+
+#- name: Debug MCP Status
+#  debug:
+#    msg: "{{ mcp_status_output.stdout }}"
+
+- name: Get Cluster Version
+  shell: |
+     oc get clusterversion
+  register: clusterversion_output
+
+#- name: Debug Cluster Version
+#  debug:
+#    msg: "{{ clusterversion_output.stdout }}"
+
+- name: Get ClusterVersion history
+  shell: oc get clusterversion -o json
+  register: clusterupdate_output
+
+- name: Parse JSON and extract history
+  set_fact:
+    updates: "{{ clusterupdate_output.stdout | from_json | json_query('items[0].status.history') }}"
+
+#- name: Debug Cluster Update
+#  debug:
+#    msg: "{{ updates }}"
+       
+- name: Check Cluster Upgradeable
+  shell: |
+     oc adm upgrade status
+  register: upgrade_check_status
+
+#- name: Debug Check Cluster Upgradeable
+#  debug:
+#    msg: "{{ upgrade_check_status.stdout }}"

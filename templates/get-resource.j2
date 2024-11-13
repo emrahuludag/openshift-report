@@ -1,0 +1,89 @@
+<table border="1">
+    <thead>
+        <tr>
+            <th>Role</th>
+            <th>Node Count</th>
+            <th>Cpu Total</th>
+            <th>Memory Total (Mb)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in total_resource_info.stdout_lines[1:] %}
+        {% set fields = line.split(';') %}
+        <tr            
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td>{{ fields[0] }}</td>
+            <td>{{ fields[1] }}</td>
+            <td>{{ fields[2] }}</td> 
+            <td>{{ fields[3] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>vCpu</th>
+            <th>Cpu Usage%</th>
+            <th>Memory Total / Free (Mb)</th>
+            <th>Memory Usage %</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in topnode_output.stdout_lines[1:] %}
+        {% set fields = line.split(maxsplit=5) %}
+        <tr 
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td style="white-space: nowrap"><strong>{{ fields[0] }}</strong></td>
+            <td>{{ fields[1] }}</td>
+            
+            <!-- CPU% Column -->
+            <td>
+                {% set cpu_usage = fields[2].strip('%')|float %}
+                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: {{ cpu_usage }}%; background-color: 
+                    {% if cpu_usage > 80 %}
+                        red;
+                    {% elif cpu_usage > 50 %}
+                        orange;
+                    {% else %}
+                        lightgreen;
+                    {% endif %}
+                    color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>{{ fields[2] }}</strong></span>
+                    </div>
+                </div>
+            </td>
+
+            <!-- MEMORY (MB) Column -->
+            <td>{{ fields[3] }}</td>
+            <td>
+                {% set memory_usage = fields[4].strip('%')|float %}
+                <div style="width: 100%; background-color: #ddd; position: relative; height: 20px; border-radius: 5px;">
+                    <div style="width: {{ memory_usage }}%; background-color: 
+                    {% if memory_usage > 80 %}
+                        red;
+                    {% elif memory_usage > 50 %}
+                        orange;
+                    {% else %}
+                        lightgreen;
+                    {% endif %}
+                    color: white; text-align: center; height: 100%; border-radius: 5px 0 0 5px;">
+                        <span style="position: absolute; left: 50%; transform: translateX(-50%); color: white;"><strong>{{ fields[4] }}</strong></span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+

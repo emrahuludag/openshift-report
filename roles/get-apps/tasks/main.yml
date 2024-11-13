@@ -1,0 +1,13 @@
+---
+- name: Get APPS
+  shell: |
+     oc get applications -A -o wide -o json | jq -r '.items[] |
+     { 
+      Namespace: (.metadata.namespace // "N/A"), 
+      Name: (.metadata.name // "N/A"), 
+      SyncStatus: (.status.sync.status // "N/A"), 
+      HealthStatus: (.status.health.status // "N/A"), 
+      Source: (.spec.source.repoURL // "N/A"), 
+      Revision: (.status.operationState.syncResult.revision // "N/A")
+     }| join(";")'
+  register: apps_info

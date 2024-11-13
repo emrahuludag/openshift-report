@@ -1,0 +1,38 @@
+<h2>Namespaces</h2>
+<table border="1" id="namespacetable">
+    <thead>
+        <tr>
+            <th>Name
+            <br>
+                <span onclick="sortTable('namespacetable', 0, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('namespacetable', 0, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+                <input type="text" onkeyup="filterTable('namespacetable')" placeholder="Search ..">
+            </th>
+            <th>Status
+            <br>
+                <span onclick="sortTable('namespacetable', 1, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('namespacetable', 1, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+            <th>Age
+            <br>
+                <span onclick="sortTable('namespacetable', 2, 'asc')" style="cursor: pointer;">&#x25B2;</span>
+                <span onclick="sortTable('namespacetable', 2, 'desc')" style="cursor: pointer;">&#x25BC;</span>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in namespaces_info.stdout_lines[1:] %}
+        {% set fields = line.split(';') %}
+        <tr            
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td style="white-space: nowrap"><strong>{{ fields[0] }}</strong></td>
+            <td>{{ fields[1] }}</td>
+            <td>{{ fields[2] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

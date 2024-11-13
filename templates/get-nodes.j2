@@ -1,0 +1,38 @@
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Roles</th>
+            <th>Age</th>
+            <th>Version</th>
+            <th>Node-IP</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in nodes_output.stdout_lines[1:] %}
+        {% set fields = line.split() %}
+        <tr 
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td style="white-space: nowrap"><strong>{{ fields[0] }}</strong></td>
+            {% if fields[1] != 'Ready' %}
+                <td><span class="red-box">{{ fields[1] }}</span></td>
+                <td><span class="red-box">{{ fields[2] }}</span></td>
+                <td><span class="red-box">{{ fields[3] }}</span></td>
+                <td><span class="red-box">{{ fields[4] }}</span></td>
+                <td><span class="red-box">{{ fields[5] }}</span></td>
+            {% else %}
+                <td>{{ fields[1] }}</td>
+                <td>{{ fields[2] }}</td>
+                <td>{{ fields[3] }}</td>
+                <td>{{ fields[4] }}</td>
+                <td>{{ fields[5] }}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

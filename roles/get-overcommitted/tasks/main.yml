@@ -1,0 +1,20 @@
+---
+
+- name: Get overcommitted nodes
+  shell: |
+    for node in $(oc get nodes --no-headers -o custom-columns=NAME:.metadata.name); do 
+        resource_info=$(oc describe node "$node" | awk '/Allocated resources:/,/Events:/ { if (NR>1) print }')
+        cpu_info=$(echo "$resource_info" | awk '/cpu/ {print}' | sed 's/^ *//' | tr -s ' ' ',')
+        memory_info=$(echo "$resource_info" | awk '/memory/ {print}' | sed 's/^ *//' | tr -s ' ' ',')
+        cpu_requests=$(echo "$cpu_info" | awk -F, '{print $2 " " $3}')
+        cpu_limits=$(echo "$cpu_info" | awk -F, '{print $4 " " $5}')
+        memory_requests=$(echo "$memory_info" | awk -F, '{print $2 " " $3}')
+        memory_limits=$(echo "$memory_info" | awk -F, '{print $4 " " $5}')
+        formatted_info="$node,$cpu_requests,$cpu_limits,$memory_requests,$memory_limits"
+        echo "$formatted_info"
+    done
+  register: node_resource_info
+
+#- name: Save the output to a variable
+#  debug:
+#    msg: "{{ node_resource_info }}"

@@ -1,0 +1,87 @@
+- name: Retrieve user information from OpenShift
+  shell: |
+    #!/bin/bash
+
+    users=$(oc get users -o jsonpath='{.items[*].metadata.name}')
+
+    echo "NAME;Full Name;Namespace;Role;Creation Timestamp"
+
+    for user in $users; do
+        full_name=$(oc get user "$user" -o json | jq -r '.fullName // "N/A"')
+        creation_timestamp=$(oc get user "$user" -o json | jq -r '.metadata.creationTimestamp // "N/A"')
+
+        roles_in_namespaces=$(oc get rolebinding --all-namespaces -o json | jq -r --arg user "$user" \
+            '.items[] | select(.subjects[]?.name == $user and .subjects[]?.kind == "User") | "\(.metadata.namespace):\(.roleRef.name)"')
+
+        if [ -n "$roles_in_namespaces" ]; then
+            while IFS=: read -r namespace role; do
+                printf "%s;%s;%s;%s;%s\n" "$user" "$full_name" "$namespace" "$role" "$creation_timestamp"
+            done <<< "$roles_in_namespaces"
+        else
+            printf "%s;%s;N/A;No Role Assigned;%s\n" "$user" "$full_name" "$creation_timestamp"
+        fi
+
+        cluster_roles=$(oc get clusterrolebinding -o json | jq -r --arg user "$user" \
+            '.items[] | select(.subjects[]?.name == $user and .subjects[]?.kind == "User") | .roleRef.name')
+
+        if [ -n "$cluster_roles" ]; then
+            while read -r role; do
+                printf "%s;%s;Cluster;%s;%s\n" "$user" "$full_name" "$role" "$creation_timestamp"
+            done <<< "$cluster_roles"
+        fi
+    done
+  register: user_info
+
+- name: Display user information
+  debug:
+    var: user_info.stdout_lines
+
+
+
+- name: Get groups, roles, and role bindings
+  shell: |
+        #!/bin/bash
+        groups=$(oc get groups -o jsonpath='{.items[*].metadata.name}')
+        echo "GROUP NAME;Namespace;Role;Role Binding"
+        for group in $groups; do
+            roles_in_namespaces=$(oc get rolebinding --all-namespaces -o json | jq -r --arg group "$group" \
+                '.items[] | select(.subjects[]?.name == $group and .subjects[]?.kind == "Group") | "\(.metadata.namespace);\(.roleRef.name);\(.metadata.name)"')
+            if [ -n "$roles_in_namespaces" ]; then
+                while IFS=';' read -r namespace role binding; do
+                    printf "%s;%s;%s;%s\n" "$group" "$namespace" "$role" "$binding"
+                done <<< "$roles_in_namespaces"
+            fi
+            cluster_roles=$(oc get clusterrolebinding -o json | jq -r --arg group "$group" \
+                '.items[] | select(.subjects[]?.name == $group and .subjects[]?.kind == "Group") | "\(.roleRef.name);\(.metadata.name)"')
+            if [ -n "$cluster_roles" ]; then
+                while IFS=';' read -r role binding; do
+                    printf "%s;%s;%s;%s\n" "$group" "Cluster" "$role" "$binding"
+                done <<< "$cluster_roles"
+            fi
+            if [ -z "$roles_in_namespaces" ] && [ -z "$cluster_roles" ]; then
+                printf "%s;%s;%s;%s\n" "$group" "N/A" "No Role Assigned" "N/A"
+            fi
+        done
+  register: group_info
+
+
+- name: Get groups and their members
+  shell: |
+        #!/bin/bash
+        groups=$(oc get groups -o jsonpath='{.items[*].metadata.name}')
+        echo "GROUP NAME;USERNAME;FULL NAME"
+        for group in $groups; do
+            members=$(oc get group "$group" -o json | jq -r '.users[]')
+            if [ -n "$members" ]; then
+                for user in $members; do
+                    full_name=$(oc get user "$user" -o jsonpath='{.fullName}' 2>/dev/null)
+                    if [ -z "$full_name" ]; then
+                        full_name="N/A"
+                    fi
+                    printf "%s;%s;%s\n" "$group" "$user" "$full_name"
+                done
+            else
+                printf "%s;%s;%s\n" "$group" "N/A" "No Members"
+            fi
+        done
+  register: group_members_info

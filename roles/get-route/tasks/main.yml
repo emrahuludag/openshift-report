@@ -1,0 +1,23 @@
+---
+
+- name: Gather route information expect openshift ns
+  shell: |
+    oc get route -A -o json | jq -r '
+      [
+        "NAMESPACE", "NAME", "HOST/PORT", "PATH", "SERVICE", "TARGET PORT", "STATUS"
+      ],
+      (.items[] | [
+        .metadata.namespace // "N/A", 
+        .metadata.name // "N/A",
+        .spec.host // "N/A",
+        .spec.path // "N/A",
+        .spec.to.name // "N/A",
+        .spec.port.targetPort // "N/A",
+        (.status.ingress[0].conditions[0].status // "N/A")
+      ] | map(tostring))
+    ' | jq -s 'map(join(";")) | .[]' | tr -d '"'
+  register: route_information
+
+#- name: Debug route_information information
+#  debug:
+#    msg:  "{{ route_information.stdout }}"

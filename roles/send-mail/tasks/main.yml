@@ -1,0 +1,30 @@
+---    
+
+- name: Generate HTML report
+  template:
+    src: cluster_report.j2
+    dest: "{{playbook_dir}}/OpenShift_{{site_name}}_{{ cluster_name }}_Cluster-Overview-Report_{{ report_date }}.html"
+
+
+- name: Read HTML report into a variable
+  slurp:
+    src: "{{playbook_dir}}/OpenShift_{{site_name}}_{{ cluster_name }}_Cluster-Overview-Report_{{ report_date }}.html"
+  register: html_report
+
+- name: Prepare email subject
+  set_fact:
+    email_subject: "{{ '🚨CRITICAL: Cluster Node Status ❗️ ' if node_critical_flag | default(false) else '' }} {{ '⚠️ WARN: Cluster Operator DEGRADED ' if co_warning_flag | default(false) else '' }} OpenShift {{site_name}} {{cluster_name}} Cluster Report"
+
+- name: Send email with report
+  community.general.mail:
+    host: "{{ mail_host }}"
+    port: "{{ mail_port }}"
+    sender: "{{ mail_sender }}"
+    to: "{{ mail_to }}"
+    subject: "{{ email_subject }} "
+    body: >
+       Please find attached the health check report for our {{ site_name }} {{ cluster_name }} OpenShift environment. 
+       This report provides an overview of the current state of our cluster, including any identified issues for improvements.
+    attach:
+    - "{{playbook_dir}}/OpenShift_{{site_name}}_{{ cluster_name }}_Cluster-Overview-Report_{{ report_date }}.html"
+    subtype: html

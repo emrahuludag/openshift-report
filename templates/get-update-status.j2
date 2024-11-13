@@ -1,0 +1,98 @@
+
+<h2> Cluster Version and Update Information </h2>
+<h2>System Upgrade Status</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Version</th>
+            <th>Available</th>
+            <th>Progressing</th>
+            <th>Since</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in clusterversion_output.stdout_lines[1:] %}
+        {% set fields = line.split(maxsplit=5) %}
+        <tr>
+            <td>{{ fields[0] }}</td>
+            <td>{{ fields[1] }}</td>
+            <td>
+                {% if fields[2] == 'True' %}
+                    <span class="green-box">{{ fields[2] }}</span>
+                {% else %}
+                    <span class="red-box">{{ fields[2] }}</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if fields[3] == 'False' %}
+                    <span class="green-box">{{ fields[2] }}</span>
+                {% else %}
+                    <span class="red-box">{{ fields[2] }}</span>
+                {% endif %}
+            </td>
+            <td>{{ fields[4] }}</td>
+            <td style="background-color: red; color: white;">{{ fields[5] if fields|length > 5 else '' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+<br>
+
+<h2>Update History</h2>
+
+{% for update in updates %}
+<table border="1">
+    <thead>
+        <tr>
+            <th colspan="2" style="padding: 10px;text-align: center">Cluster Update {{ loop.index }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="padding: 10px; text-align: left;"><strong>Upgraded Version</strong></td>
+            <td style="padding: 10px; text-align: left;">{{ update.version }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; text-align: left;"><strong>Status</strong></td>
+            <td style="padding: 10px; text-align: left;">{{ update.state }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; text-align: left;"><strong>Started Time (UTC)</strong></td>
+            <td style="padding: 10px; text-align: left;">{{ update.startedTime }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; text-align: left;"><strong>Completion Time (UTC)</strong></td>
+            <td style="padding: 10px; text-align: left;">{{ update.completionTime }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; text-align: left;"><strong>Image</strong></td>
+            <td style="padding: 10px; text-align: left;">{{ update.image }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; text-align: left;"><strong>Verified</strong></td>
+            <td style="padding: 10px; text-align: left;">{{ 'Yes' if update.verified else 'No' }}</td>
+        </tr>
+    </tbody>
+</table>
+{% endfor %}
+
+<br>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Upgrade Check Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td style="white-space: pre-wrap; text-align: left;">{{ upgrade_check_status.stdout }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<br>

@@ -1,0 +1,11 @@
+---
+
+- name: Gather namespaces information
+  shell: |
+      oc get ns | awk -F "  +" '{$1=$1}1' OFS=";"
+  register: namespaces_info
+
+#- name: Debug project_namespace information
+#  debug:
+#    msg:  "{{ project_namespace.stdout }}"
+

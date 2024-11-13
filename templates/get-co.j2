@@ -1,0 +1,42 @@
+<h2>Cluster Operator Status</h2>
+<table border="1"> 
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Version</th>
+            <th>Available</th>
+            <th>Progressing</th>
+            <th>Degraded</th>
+            <th>Since</th>
+            <th>Message</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in co_output.stdout_lines[1:] %}
+        {% set fields = line.split(maxsplit=6) %}
+        <tr 
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td><strong>{{ fields[0] }}</strong></td>
+            {% if fields[4] == 'True' or fields[5] == 'True' %}
+            <td>{{ fields[1] }}</strong></td>
+            <td><span class="red-box">{{ fields[2] }}</strong></td>
+            <td><span class="red-box">{{ fields[3] }}</strong></td>
+            <td><span class="red-box">{{ fields[4] }}</strong></td>
+            <td>{{ fields[5] }}</td>
+            <td style="background-color: red; color: white; width: 200px; word-wrap: break-word; white-space: normal; font-size: 12px;"><strong>{{ fields[6] if fields|length > 6 else '' }}</strong></td>         
+            {% else %}
+            <td>{{ fields[1] }}</td>
+            <td>{{ fields[2] }}</td>
+            <td>{{ fields[3] }}</td>
+            <td>{{ fields[4] }}</td>
+            <td>{{ fields[5] }}</td>
+            <td>{{ fields[6] if fields|length > 6 else '' }}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

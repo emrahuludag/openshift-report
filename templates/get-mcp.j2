@@ -1,0 +1,60 @@
+<h2>Machine Config Pool </h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Config</th>
+            <th>Updated</th>
+            <th>Updating</th>
+            <th>Degraded</th>
+            <th>Machine Count</th>
+            <th>Ready</th>
+            <th>Updated</th>
+            <th>Degraded</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in mcp_status_output.stdout_lines[1:] %}
+        {% set fields = line.split() %}
+        <tr
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td><strong>{{ fields[0] }}</strong></td>
+            <td>{{ fields[1] }}</td>
+            <td>
+                {% if fields[2] == 'True' %}
+                    {{ fields[2] }}
+                {% else %}
+                    <span class="red-box">{{ fields[2] }}</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if fields[3] != 'True' %}
+                    {{ fields[3] }}
+                {% else %}
+                    <span class="red-box">{{ fields[3] }}</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if fields[4] != 'True' %}
+                    {{ fields[4] }}
+                {% else %}
+                    <span class="red-box">{{ fields[4] }}</span>
+                {% endif %}
+            </td>
+            <td>{{ fields[5] }}</td>
+            <td>{{ fields[6] }}</td>
+            <td>{{ fields[7] }}</td>
+            <td>{{ fields[8] }}</td>
+            <td>{{ fields[9] }}</td>
+             <!-- <td>{{ fields[8] if fields|length > 8 else '' }}</td> -->
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>

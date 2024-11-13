@@ -1,0 +1,43 @@
+---
+
+- name: Get Deployments with request resources expect openshift default namespaces
+  shell: |
+    echo "NAMESPACE;NAME;REPLICAS;READY;AGE;IMAGES;VERSIONS;CPU_REQUEST;CPU_LIMIT;MEMORY_REQUEST;MEMORY_LIMIT"
+     oc get deployments --all-namespaces -o json | jq -r '
+       .items[] |
+       select(
+         (.metadata.namespace | test("^openshift-") | not) and
+         (.metadata.namespace | test("^kube-") | not) and
+         (.metadata.namespace | test("^open-cluster-management-") | not)
+       ) |
+       [
+         .metadata.namespace,
+         .metadata.name,
+         (.status.readyReplicas // 0),
+          (if .status.replicas then .status.replicas else "N/A" end),
+          (if .status.availableReplicas then .status.availableReplicas else "N/A" end),
+                 (.metadata.creationTimestamp | fromdateiso8601 | todate),
+         #(if .spec.template.spec.containers then 
+         #    [.spec.template.spec.containers[] | .name] | join(", ") 
+         #  else "N/A" end),
+         (if .spec.template.spec.containers then 
+            [.spec.template.spec.containers[] | .image | split(":")[0]] | join(", ") 
+          else "N/A" end),
+         (if .spec.template.spec.containers then 
+            [.spec.template.spec.containers[] | .image | split(":")[1]] | join(", ") 
+          else "N/A" end),
+         (if .spec.template.spec.containers then 
+            [.spec.template.spec.containers[] | if .resources.requests.cpu then .resources.requests.cpu else "N/A" end] | join(", ") 
+          else "N/A" end),
+         (if .spec.template.spec.containers then 
+            [.spec.template.spec.containers[] | if .resources.limits.cpu then .resources.limits.cpu else "N/A" end] | join(", ") 
+          else "N/A" end),
+         (if .spec.template.spec.containers then 
+            [.spec.template.spec.containers[] | if .resources.requests.memory then .resources.requests.memory else "N/A" end] | join(", ") 
+          else "N/A" end),
+         (if .spec.template.spec.containers then 
+            [.spec.template.spec.containers[] | if .resources.limits.memory then .resources.limits.memory else "N/A" end] | join(", ") 
+          else "N/A" end)
+       ] |
+       @csv | gsub("\""; "") | gsub(","; ";")' 
+  register: deployment_status_output

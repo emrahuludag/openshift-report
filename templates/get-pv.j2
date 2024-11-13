@@ -1,0 +1,106 @@
+<h2>Storage Class</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Provisioner</th>
+            <th>Reclaim Policy</th>
+            <th>Volume Binding Mode</th>
+            <th>Allow Volume Expansion</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in sc_info.stdout_lines %}
+        {% set fields = line.split(';') %}
+        <tr            
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td><strong>{{ fields[0] }}</strong></td>
+            <td>{{ fields[1] }}</td>
+            <td>{{ fields[2] }}</td>
+            <td>{{ fields[3] }}</td>
+            <td>{{ fields[4] }}</td>
+            <td>{{ fields[5] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+<h2>Persistent Volume Claim's</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Namespace</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Volume</th>
+            <th>Capacity</th>
+            <th>Access Modes</th>
+            <th>Storageclass</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in pvc_info.stdout_lines %}
+        {% set fields = line.split(';') %}
+        <tr            
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td><strong>{{ fields[0] }}</strong></td>
+            <td>{{ fields[1] }}</td>
+            <td>{{ fields[2] }}</td>
+            <td>{{ fields[3] }}</td>
+            <td>{{ fields[4] }}</td>
+            <td>{{ fields[5] }}</td>
+            <td>{{ fields[6] }}</td>
+            <td>{{ fields[7] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>
+
+<h2>Persistent Volume</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Capacity</th>
+            <th>Access Modes</th>
+            <th>Policy</th>
+            <th>Status</th>
+            <th>Claim</th>
+            <th>Storageclass</th>
+            <th>Creatin Timestamp</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in pv_info.stdout_lines[1:] %}
+        {% set fields = line.split(';') %}
+        <tr            
+            {% if loop.index is divisibleby 2 %}
+                style="background-color: #f0f0f0;"
+            {% else %}
+                style="background-color: white;"
+            {% endif %}>
+            <td style="white-space: nowrap"><strong>{{ fields[0] }}</strong></td>
+            <td>{{ fields[1] }}</td>
+            <td>{{ fields[2] }}</td>
+            <td>{{ fields[3] }}</td>
+            <td>{{ fields[4] }}</td>
+            <td>{{ fields[5] }}</td>
+            <td>{{ fields[6] }}</td>
+            <td>{{ fields[7] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
